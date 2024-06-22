@@ -1,0 +1,6 @@
+postgres/data
+
+.idea
+logs/.idea
+logs/target
+
