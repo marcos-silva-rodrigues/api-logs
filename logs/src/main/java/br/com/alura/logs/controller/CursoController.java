@@ -1,5 +1,7 @@
 package br.com.alura.logs.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +24,8 @@ import br.com.alura.logs.service.CursoService;
 @CrossOrigin(origins="*", maxAge=3600)
 @RequestMapping("/cursos")
 public class CursoController {
+
+  private final Logger logger = LoggerFactory.getLogger(CursoController.class);
 	
 	final CursoService cursoService;
 	
@@ -49,7 +53,8 @@ public class CursoController {
 	
 	@GetMapping
 	public ResponseEntity<Page<CursoModel>> getAllCursos(@PageableDefault(page = 0, size = 10, sort = "dataInscricao", direction = Sort.Direction.ASC) Pageable pageable) {
-		return ResponseEntity.status(HttpStatus.OK).body(cursoService.findAll(pageable));
+		logger.info("Buscando por todos os registros");
+    return ResponseEntity.status(HttpStatus.OK).body(cursoService.findAll(pageable));
 	}
 	
 	@GetMapping("/{id}")
