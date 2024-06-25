@@ -44,8 +44,31 @@
         </layout>
     </appender>
 
+
+    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+        <http>
+            <!--
+            Caso esteja no Windows, utilize o comando "ipconfig" para obter seu IP
+            Caso esteja no Linux ou MAC, utilize "ip addr show" ou "ifconfig"
+            -->
+            <url>http://loki-api-cursos:3100/loki/api/v1/push</url>
+        </http>
+        <format class="com.github.loki4j.logback.ProtobufEncoder">
+            <label>
+                <pattern>app:api-cursos,host:${HOSTNAME},thread:%thread,level:%level,class:%logger{0},method:%M,message:%msg</pattern>
+                <keyValueSeparator>:</keyValueSeparator>
+            </label>
+            <message>
+                <pattern>timestamp=%d{HH:mm:ss.SSS} thread=%thread level=%level class=%logger{0} method=%M %rEx{short} %n</pattern>
+            </message>
+            <sortByTime>true</sortByTime>
+        </format>
+    </appender>
+
+
     <root level="info">
         <appender-ref ref="json-stdout" />
+        <appender-ref ref="LOKI"/>
     </root>
 
 </configuration>

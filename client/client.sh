@@ -2,7 +2,7 @@
 
 # Caso esteja no Windows, utilize o comando "ipconfig" para obter seu IP
 # Caso esteja no Linux ou MAC, utilize "ip addr show" ou "ifconfig"
-HOST='192.168.1.9:8080'
+HOST='api-cursos:8080'
 
 while true
     do

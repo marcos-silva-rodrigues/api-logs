@@ -16,4 +16,4 @@ scrape_configs:
     metrics_path: /actuator/prometheus
     static_configs:
       - targets:
-          - 172.27.208.1:8080
+          - api-cursos:8080

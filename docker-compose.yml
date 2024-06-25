@@ -2,6 +2,7 @@ version: '3.8'
 
 networks:
   database:
+    internal: true
   monit:
   api:
   
@@ -28,6 +29,27 @@ services:
       - ./postgres/db:/docker-entrypoint-initdb.d/
       - ./postgres/data:/var/lib/postgresql/data
     networks:
+      - database
+
+  api-cursos:
+    build:
+      context: ./logs/
+      dockerfile: Dockerfile
+    image: api-cursos
+    container_name: api-cursos
+    restart: unless-stopped
+    ports:
+      - 80:8080
+    networks:
+      - api
+      - database
+      - monit
+    healthcheck:
+      test: "curl -sS http://api-cursos:8080/actuator/health"
+      interval: 1s
+      timeout: 30s
+      retries: 60
+    depends_on:
       - database
 
   grafana-api-cursos:
@@ -60,6 +82,7 @@ services:
       - 9090:9090
     networks:
       - monit
+      - api
 
   loki-api-cursos:
     image: grafana/loki
@@ -71,6 +94,9 @@ services:
       - "3100:3100"
     networks:
       - monit
+      - api
+    depends_on:
+      - grafana-api-cursos
 
   client-api-cursos:
     build:
@@ -81,3 +107,5 @@ services:
     restart: unless-stopped
     networks:
       - api
+    depends_on:
+      - api-cursos
