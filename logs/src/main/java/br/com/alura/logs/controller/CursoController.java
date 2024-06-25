@@ -39,24 +39,17 @@ public class CursoController {
 	
 	@PostMapping
 	 public ResponseEntity<Object> saveCurso(@RequestBody @Valid CursoDto cursoDto){
-		logger.info("iniciando processo de inserção de registro de novo curso");
-    logger.info("Chamando o curso service para validar se o numero de matricula já existe!");
-
     try {
       if(cursoService.existsByNumeroMatricula(cursoDto.getNumeroMatricula())) {
-        logger.warn("novo registro não inserido, o numero da matricula já existe!");
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("O número de matricula do curso já esta em uso!");
+        logger.warn("novo registro nao inserido, o numero da matricula ja existe!");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("O numero de matricula do curso ja esta em uso!");
       }
 
-      logger.info("Chamando o curso service para validar se o numero do curso já existe!");
       if(cursoService.existsByNumeroCurso(cursoDto.getNumeroCurso())) {
-        logger.warn("novo registro não inserido, o numero do curso já existe");
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("O número do curso já esta em uso!");
+        logger.warn("novo registro nao inserido, o numero do curso ja existe");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("O numero do curso ja esta em uso!");
       }
 
-      logger.info("Validações de cursoService sobre cursoDto executadas com sucesso!");
-
-      logger.info("Chamando cursoService.save para armazenar novo registro...");
       var cursoModel = new CursoModel();
       BeanUtils.copyProperties(cursoDto, cursoModel);
       cursoModel.setDataInscricao(LocalDateTime.now(ZoneId.of("UTC")));
@@ -64,8 +57,8 @@ public class CursoController {
       logger.info("Novo registro de curso salvo com sucesso");
       return ResponseEntity.status(HttpStatus.CREATED).body(cursoService.save(cursoModel));
     } catch (DataAccessResourceFailureException ex) {
-      logger.error("Erro de comunicação com o database");
-      throw new InternalErrorException("Erro momentâneo, por favor tente mais tarde...");
+      logger.error("Erro de comunicacao com o database");
+      throw new InternalErrorException("Erro momentaneo, por favor tente mais tarde...");
     }
   }
 	
@@ -76,45 +69,42 @@ public class CursoController {
       logger.info("Chamando cursoService para buscar todos os registros");
       return ResponseEntity.status(HttpStatus.OK).body(cursoService.findAll(pageable));
     } catch (CannotCreateTransactionException ex) {
-      logger.error("Erro de comunicação com o database");
+      logger.error("Erro de comunicacao com o database");
       throw new InternalErrorException("Erro momentâneo, por favor tente mais tarde...");
     }
   }
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<Object> getOneCursos(@PathVariable(value="id") UUID id) {
-    logger.info("Chamando cursoService para buscar um registro por UUID");
-    try {
+try {
       Optional<CursoModel> cursoModelOptional = cursoService.findById(id);
       logger.info("Validando por cursoService se o UUID existe");
 
       if (!cursoModelOptional.isPresent()) {
-        logger.warn("Validação em cursoService não encontrou o registro procurado!");
+        logger.warn("Validacao em cursoService nao encontrou o registro procurado!");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Curso não encontrado!");
       }
       logger.info("O registro procurado pelo cliente foi encontrado por cursoService no database");
       return ResponseEntity.status(HttpStatus.OK).body(cursoModelOptional.get());
 
     } catch (CannotCreateTransactionException ex) {
-      logger.error("Erro de comunicação com o database");
+      logger.error("Erro de comunicacao com o database");
       throw new InternalErrorException("Erro momentâneo, por favor tente mais tarde...");
     }
   }
 	
   @DeleteMapping("/{id}")
   public ResponseEntity<Object> deleteCursos(@PathVariable(value = "id") UUID id){
-    logger.info("Chamando cursoService para deletar um registro por UUID");
 
     try {
       Optional<CursoModel> cursoModelOptional = cursoService.findById(id);
       logger.info("Validando por cursoService se o UUID existe");
 
       if (!cursoModelOptional.isPresent()) {
-        logger.warn("Tentativa de exclusão abortada, UUID informado não existe!");
+        logger.warn("Tentativa de exclusao abortada, UUID informado nao existe!");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Curso não encontrado!");
       }
 
-      logger.info("Validações de cursoService sobre cursoDto executadas com sucesso!");
       cursoService.delete(cursoModelOptional.get());
 
       logger.info("O registro procurado pelo cliente foi encontrado e deletado por cursoService no database");
@@ -128,18 +118,15 @@ public class CursoController {
 
   @PutMapping("/{id}")
   public ResponseEntity<Object> updateCursos(@PathVariable(value = "id") UUID id, @RequestBody @Valid CursoDto cursoDto) {
-    logger.info("Chamando cursoService para atualizar um registro por UUID");
-
     try {
       Optional<CursoModel> cursoModelOptional = cursoService.findById(id);
       logger.info("Validando por cursoService se o UUID existe");
 
       if (!cursoModelOptional.isPresent()) {
-        logger.warn("Validação em cursoService não encontrou o registro procurado!");
+        logger.warn("Validacao em cursoService nao encontrou o registro procurado!");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Curso não encontrado!");
       }
 
-      logger.info("Validação de cursoService sobre cursoDto executada com sucesso!");
       var cursoModel = new CursoModel();
       BeanUtils.copyProperties(cursoDto, cursoModel);
       cursoModel.setId(cursoModelOptional.get().getId());
@@ -149,7 +136,7 @@ public class CursoController {
       return ResponseEntity.status(HttpStatus.OK).body(cursoService.save(cursoModel));
 
     } catch (CannotCreateTransactionException ex) {
-      logger.error("Erro de comunicação com o database");
+      logger.error("Erro de comunicacao com o database");
       throw new InternalErrorException("Erro momentâneo, por favor tente mais tarde...");
     }
   }
