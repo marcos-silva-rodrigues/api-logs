@@ -4,4 +4,6 @@ postgres/data
 logs/.idea
 logs/target
 *.log
+grafana
+prometheus/prometheus-data
 
